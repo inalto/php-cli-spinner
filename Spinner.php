@@ -29,15 +29,27 @@ class Spinner
     private $current;
 
     /**
+     * @var int
+     * terminal width
+     */
+    private $width;
+
+    /**
+     * @var boolean
+     */
+
+    /**
      * Spinner constructor.
      *
      * @param array $frames
      */
-    public function __construct(array $frames)
+    public function __construct(array $frames,$pad = true)
     {
         $this->frames  = $frames;
         $this->length  = count($this->frames);
         $this->current = 0;
+        $this->pad = $pad;
+        $this->width = exec('tput cols');
     }
 
     /**
@@ -46,6 +58,9 @@ class Spinner
     public function tick(string $message)
     {
         $next = $this->next();
+        if ($this->pad) {
+            $message=str_pad($message,$this->width - strlen($this->frames[0]));
+        }
 
         echo chr(27).'[0G';
         echo sprintf('%s %s', $this->frames[$next], $message);
